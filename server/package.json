@@ -1,0 +1,17 @@
+{
+  "name": "vue2-starter",
+  "version": "1.0.0",
+  "description": "Vue2-Starter",
+  "author": "lesonli <307771861@qq.com>",
+  "private": true,
+  "scripts": {
+    "server": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.13.3"
+  },
+  "engines": {
+    "node": ">= 4.0.0",
+    "npm": ">= 3.0.0"
+  }
+}
