@@ -21,7 +21,7 @@ npm run dev
 # build for production with minification
 npm run build
 ```
-# 启动网站
+## 启动网站
 ```
 cd server && npm install
 cd ../ && npm run serve
