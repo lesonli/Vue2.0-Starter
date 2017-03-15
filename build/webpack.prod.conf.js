@@ -1,7 +1,6 @@
-var path = require('path')
-var config = require('../config')
-var utils = require('./utils')
 var webpack = require('webpack')
+var config = require('./config')
+var path = require('path')
 var merge = require('webpack-merge')
 var baseWebpackConfig = require('./webpack.base.conf')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
@@ -10,41 +9,66 @@ var HtmlWebpackPlugin = require('html-webpack-plugin')
 
 var webpackConfig = merge(baseWebpackConfig, {
   module: {
-    loaders: utils.styleLoaders({ sourceMap: config.build.productionSourceMap, extract: true })
+    rules: [{
+      test: /\.vue$/,
+      loader: "vue-loader",
+      options: {
+        loaders: {
+          css: ExtractTextPlugin.extract({
+            use: 'css-loader',
+            fallback: 'vue-style-loader'
+          }),
+          scss: ExtractTextPlugin.extract({
+            use: ["css-loader", "sass-loader"],
+            fallback: 'vue-style-loader'
+          })
+        }
+      }
+    },{
+      test: /\.css$/,
+      use: ExtractTextPlugin.extract({
+        use: 'css-loader',
+        fallback: 'style-loader'
+      })
+    }, {
+      test: /\.scss$/,
+      use: ExtractTextPlugin.extract({
+        use: ['css-loader', 'sass-loader'],
+        fallback: 'style-loader'
+      })
+    },],
+    noParse: /videojs-contrib-hls/
   },
-  devtool: config.build.productionSourceMap ? '#source-map' : false,
+  resolve: {
+    //切换min，去掉警告
+    alias: {
+      'vue$': 'vue/dist/vue.min.js'
+    }
+  },
   output: {
-    path: config.build.assetsRoot,
-    filename: utils.assetsPath('js/[name].[chunkhash].js'),
-    chunkFilename: utils.assetsPath('js/[id].[chunkhash].js')
+    // publicPath: 'https://file.laoshi123.com',
+    publicPath: config.prod.publicPath,
+    filename: config.base.assetsPath + '/js/[name].[chunkhash].js',
+    chunkFilename: config.base.assetsPath + '/js/[name].[chunkhash].js'
   },
-  vue: {
-    loaders: utils.cssLoaders({
-      sourceMap: config.build.productionSourceMap,
-      extract: true
-    })
-  },
+  //devtool: "#source-map",
   plugins: [
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
     new webpack.DefinePlugin({
-      'process.env': config.build.env
+      'process.env.NODE_ENV': JSON.stringify('production')
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      }
-    }),
-    new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.optimize.UglifyJsPlugin(),
     // extract css into its own file
-    new ExtractTextPlugin(utils.assetsPath('css/[name].[contenthash].css')),
+    new ExtractTextPlugin(config.base.assetsPath + '/css/[name].[contenthash].css'),
     // generate dist index.html with correct asset hash for caching.
     // you can customize output by editing /index.html
     // see https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
-      filename: config.build.index,
+      filename: 'index.html',
+      //      filename: pathResolve('../server/dist/index.html'),
       template: 'index.html',
       inject: true,
-      minify: {
+      /*minify: {
         removeComments: true,
         collapseWhitespace: true,
         removeAttributeQuotes: true
@@ -52,47 +76,31 @@ var webpackConfig = merge(baseWebpackConfig, {
         // https://github.com/kangax/html-minifier#options-quick-reference
       },
       // necessary to consistently work with multiple chunks via CommonsChunkPlugin
-      chunksSortMode: 'dependency'
+      chunksSortMode: 'dependency'*/
     }),
     // split vendor js into its own file
+    /*new webpack.optimize.CommonsChunkPlugin({
+      name: ['vendor','manifest']
+      //minChunks: Infinity
+
+    }),*/
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
       minChunks: function (module, count) {
-        // any required modules inside node_modules are extracted to vendor
-        return (
-          module.resource &&
-          /\.js$/.test(module.resource) &&
-          module.resource.indexOf(
-            path.join(__dirname, '../node_modules')
-          ) === 0
-        )
+        return module.resource && /\.js$/.test(module.resource) && module.resource.indexOf(path.join(__dirname, '../node_modules')) === 0
       }
     }),
-    // extract webpack runtime and module manifest to its own file in order to
-    // prevent vendor hash from being updated whenever app bundle is updated
     new webpack.optimize.CommonsChunkPlugin({
       name: 'manifest',
       chunks: ['vendor']
-    })
+    }),
+    // extract webpack runtime and module manifest to its own file in order to
+    // prevent vendor hash from being updated whenever app bundle is updated
+    /*new webpack.optimize.CommonsChunkPlugin({
+      name: 'manifest',
+      chunks: ['vendor']
+    })*/
   ]
 })
-
-if (config.build.productionGzip) {
-  var CompressionWebpackPlugin = require('compression-webpack-plugin')
-
-  webpackConfig.plugins.push(
-    new CompressionWebpackPlugin({
-      asset: '[path].gz[query]',
-      algorithm: 'gzip',
-      test: new RegExp(
-        '\\.(' +
-        config.build.productionGzipExtensions.join('|') +
-        ')$'
-      ),
-      threshold: 10240,
-      minRatio: 0.8
-    })
-  )
-}
 
 module.exports = webpackConfig

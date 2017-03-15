@@ -1,7 +1,7 @@
 {
-  "name": "vue2-starter",
+  "name": "dscj-admin-xg-server",
   "version": "1.0.0",
-  "description": "Vue2-Starter",
+  "description": "学管后台服务端",
   "author": "lesonli <307771861@qq.com>",
   "private": true,
   "scripts": {

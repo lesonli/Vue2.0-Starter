@@ -5,13 +5,13 @@ import * as types from '../types'
 import { helloWorld } from 'src/api/hello'
 
 const state = {
-    message: ''
+    message: '默认消息'
 }
 
 // getters
 // actions
 const actions = {
-    get_message ({ commit }) {
+    getMessage ({ commit }) {
         commit(types.TEST_MESSAGE_LOADING);
         helloWorld().then(function (res) {
             commit(types.TEST_MESSAGE_LOADED,res.data.hello);

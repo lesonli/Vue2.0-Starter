@@ -1,31 +1,42 @@
-/**
- * Created by lesonli on 2016/11/16.
- */
 <template>
-    <div>
-        <header-component/>
-        <side-menu/>
-        <div>this is template body</div>
-        <router-view></router-view>
+    <div class='view home-view'>
+        <my-header></my-header>
+        <div style="padding-top:100px;text-align:center">
+            {{info}}<br >
+            <h1>{{message}}</h1>
+         <el-button @click="login">请求数据</el-button>          
+        </div>
     </div>
 </template>
-<style lang="scss" scoped>
-    body{
-        background-color:#fff;
-    }
-</style>
-<script lang="babel" >
-    import Header from '../components/Header'
-    import SideMenu from '../components/SideMenu'
-    export default{
-        data(){
-            return{
-                msg:'hello vue'
+
+<script>
+    import Header from '../components/Header.vue'
+
+    export default {
+        data() {
+            return {
+                info:"这是首页,欢迎消息: "
             }
         },
-        components:{
-            'header-component':Header,
-            'side-menu':SideMenu
+        computed:{
+            message:function()
+            {
+                return this.$store.state.hello.message;
+            }        
+        },
+        methods: {
+            login() {
+                //alert('welcome!')
+                this.$store.dispatch('getMessage');
+            },
+        },
+        components: {
+            'my-header': Header
         }
     }
+
 </script>
+<style lang="scss">
+    .home-view {
+    }
+</style>
