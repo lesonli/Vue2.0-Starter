@@ -10,9 +10,16 @@
 
 > vue2.0 全家桶启动模板
 
-
 > Vue2.0+vue-router2.0+Vuex2.0+Vue-resource+element-ui
 
+
+```
+- Vue2.0
+- Vue-router2.0
+- Vuex2.0
+- axios
+- element-ui
+```
 ## Build Setup
 
 ``` bash
@@ -24,6 +31,10 @@ npm run dev
 
 # build for production with minification
 npm run build
+
+
+## 启动网站
+
+cd server && npm install
+cd ../ && npm run serve
 ```
-# 启动网站
-cd server && npm run server
